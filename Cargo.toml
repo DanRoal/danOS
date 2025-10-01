@@ -10,8 +10,9 @@ panic =  "abort"
 panic = "abort"
 
 [[bin]]
-name = "blog_os"
+name = "danOS"
 test = false
 bench = false
 
 [dependencies]
+bootloader = "0.9"

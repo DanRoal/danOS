@@ -15,11 +15,23 @@ fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
 
+static HELLO: &[u8] = b"Hello World!";
+
 #[unsafe(no_mangle)] // with this we disable name mangling. This is needed since otherwise the compiler would generate some unique name (something like: _ZN3blog_os4_start7hb173fedf945531caE), but since we need to tell the name of the entry point functon to the linker in the next step
 pub extern "C" fn _start() -> ! {
     // We mark the function as extern "C" to tell the compiler that it 
     // should use the C calling convention. We do it this way since the 
     // name "_start" is the default entry point for most systems
+
+    let vga_buffer = 0xb8000 as *mut u8;
+
+    for (i, &byte) in HELLO.iter().enumerate() {
+        unsafe {
+            *vga_buffer.offset(i as isize * 2) = byte;
+            *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
+        }
+    }
+
     loop {}
 
     // The never return (!) type is needed since the entry point is not called
