@@ -11,13 +11,14 @@ mod vga_buffer;
 
 // This funcion is called on panic
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(info: &PanicInfo) -> ! {
     // The ! return type means that the function is diverging, i.e. not allowed
     // to ever return.
+
+    println!("{}", info);
+
     loop {}
 }
-
-static HELLO: &[u8] = b"Hello World!";
 
 #[unsafe(no_mangle)] // with this we disable name mangling. This is needed since otherwise the compiler would generate some unique name (something like: _ZN3blog_os4_start7hb173fedf945531caE), but since we need to tell the name of the entry point functon to the linker in the next step
 pub extern "C" fn _start() -> ! {
@@ -25,9 +26,9 @@ pub extern "C" fn _start() -> ! {
     // should use the C calling convention. We do it this way since the 
     // name "_start" is the default entry point for most systems
 
-    use core::fmt::Write; // Necesitamos importar fmt::Write para ser capaces de usar sus funciones
-    vga_buffer::WRITER.lock().write_str("Hello again").unwrap();
-    write!(vga_buffer::WRITER.lock(), ", some numbers: {} {}", 42, 1.337).unwrap();
+    println!("Hello World{}", "!");
+
+    panic!("Some panic message");
 
     loop {}
 

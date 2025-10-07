@@ -121,7 +121,7 @@ impl fmt::Write for Writer {
     }
 }
 
-// El probelema aquí es que como es un Static, se tiene que hacer en tiempo de compilación, pero Rust no es capaz 
+// El probleema aquí es que como es un Static, se tiene que hacer en tiempo de compilación, pero Rust no es capaz 
 // de convertir raw pointers a referencias en teimpo de compilación
 
 lazy_static! {
@@ -134,6 +134,25 @@ lazy_static! {
     });
     
 }
+
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => ($crate::vga_buffer::_print(format_args!($($arg)*)));
+}
+
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+}
+
+#[doc(hidden)]
+pub fn _print(args: fmt::Arguments) {
+    // use core::fmt::Write; // Necesitamos importar fmt::Write para ser capaces de usar sus funciones
+    WRITER.lock().write_fmt(args).unwrap();
+}
+
+
 
 
 // pub fn print_something() {
