@@ -7,6 +7,8 @@
 
 use core::panic::PanicInfo;
 
+mod vga_buffer;
+
 // This funcion is called on panic
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
@@ -23,14 +25,9 @@ pub extern "C" fn _start() -> ! {
     // should use the C calling convention. We do it this way since the 
     // name "_start" is the default entry point for most systems
 
-    let vga_buffer = 0xb8000 as *mut u8;
-
-    for (i, &byte) in HELLO.iter().enumerate() {
-        unsafe {
-            *vga_buffer.offset(i as isize * 2) = byte;
-            *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
-        }
-    }
+    use core::fmt::Write; // Necesitamos importar fmt::Write para ser capaces de usar sus funciones
+    vga_buffer::WRITER.lock().write_str("Hello again").unwrap();
+    write!(vga_buffer::WRITER.lock(), ", some numbers: {} {}", 42, 1.337).unwrap();
 
     loop {}
 
