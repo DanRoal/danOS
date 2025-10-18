@@ -44,8 +44,8 @@ struct ScreenChar {
     color_code: ColorCode,
 }
 
-const BUFFER_HEIGHT: usize = 25;
-const BUFFER_WIDTH: usize = 80;
+pub const BUFFER_HEIGHT: usize = 25;
+pub const BUFFER_WIDTH: usize = 80;
 
 #[repr(transparent)]
 struct Buffer {
@@ -131,8 +131,11 @@ lazy_static! {
         column_position: 0,
         color_code: ColorCode::new(Color::Yellow, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-    });
-    
+    });   
+}
+
+pub fn read_byte_at(row: usize, col: usize) -> u8 {
+    WRITER.lock().buffer.chars[row][col].read().ascii_character
 }
 
 #[macro_export]
