@@ -2,7 +2,7 @@
 #![no_main]
 
 use core::panic::PanicInfo;
-use danOS::{exit_qemu, serial_println, serial_print, QemuExitCode};
+use danOS::{exit_qemu, serial_println, QemuExitCode};
 
 
 #[unsafe(no_mangle)]
